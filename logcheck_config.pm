@@ -8,6 +8,8 @@ use logcheck;
 use constant {
   FOO_LOG => 'foo.log',
   BAR_LOG => 'bar.log',
+  SUDO_LOG => 'sudo-partial.log',
+  SU_LOG => 'su-partial.log'
 };
 
 # define what's okay to export                                                  
@@ -22,6 +24,10 @@ sub doggy_problems {
 
 sub disaster {
   my @matches = ($_[0] =~ /^.*disaster.*$/igm);
+  return \@matches;
+}
+sub user_not_authorized {
+  my @matches = ($_[0] =~ /^.*user NOT authorized on host.*$/gm);
   return \@matches;
 }
 
@@ -55,11 +61,12 @@ sub awkward_multiline {
 sub load_config {
   my @log_checkers = (); 
 
-  my @files     = (FOO_LOG, BAR_LOG);
+  my @files     = (FOO_LOG, BAR_LOG, SUDO_LOG, SU_LOG);
   my @matchers  = (\&doggy_problems, \&disaster, \&awkward_multiline);
   push(@log_checkers, (new logcheck(\@files, \@matchers, \&logcheck::anymatch)));
 
   push(@log_checkers, (new logcheck([BAR_LOG], [\&illegal_java_state], \&logcheck::anymatch)));
+  push(@log_checkers, (new logcheck([SUDO_LOG], [\&user_not_authorized], \&logcheck::anymatch)));
                     
   return \@log_checkers; #(new logcheck(\@files, \@matchers, \&logcheck::anymatch));
 }

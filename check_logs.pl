@@ -20,7 +20,12 @@ print($usage->text), exit if $opt->help;
 my $output_format = $opt->output_format;
 # Looks like Perl switch statements are currently an "experimental feature", so I'll go with an if/else
 if ($output_format eq 'nagios') {
-  
+  use constant {
+    OK        => 0,
+    WARNING   => 1,
+    CRITICAL  => 2,
+    UNKNOWN   => 3,
+  };
 } elsif ($output_format eq 'email') {
 
 } elsif ($output_format eq 'details') {
@@ -41,12 +46,6 @@ use logcheck_config qw(load_config);
 # main
 package main;
 
-use constant {
-  OK        => 0,
-  WARNING   => 1,
-  CRITICAL  => 2,
-  UNKNOWN   => 3,
-};
 
 # returns a hash reference of matcher => matcher result
 sub match_file {

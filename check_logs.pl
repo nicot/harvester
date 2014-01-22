@@ -5,6 +5,32 @@ use v5.6.1;
 # help keep our code clean and portable
 use strict;
 use warnings;
+use Getopt::Long::Descriptive;
+
+######################
+## Argument parsing
+# Read in options
+my ($opt, $usage) = describe_options(
+  'check_logs.pl %o',
+  [ 'output_format=s', "valid options are 'nagios', 'email', and 'details'", { required => 1 }],
+  [ 'help|h', "prints usage message" ]
+);
+print($usage->text), exit if $opt->help;
+
+my $output_format = $opt->output_format;
+# Looks like Perl switch statements are currently an "experimental feature", so I'll go with an if/else
+if ($output_format eq 'nagios') {
+  
+} elsif ($output_format eq 'email') {
+
+} elsif ($output_format eq 'details') {
+
+} else { 
+  print $usage->text;
+  exit;
+}
+# end argument parsing
+######################
 
 # for reflecting function names from references
 use B qw(svref_2object);

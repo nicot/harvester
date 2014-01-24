@@ -1,0 +1,1 @@
+# initialize matchers for all messages appearing in sudo.log

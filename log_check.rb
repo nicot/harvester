@@ -52,25 +52,34 @@ end
 
 ## For each logfile
 config.each do |file, specs|
-    oldlog = specs[0]
+    oldfile = specs[0]
     matcher = specs[1]
     if not File.exist?(file)
         print "File #{file} specified in etc/config.yaml does not exist"
         exit
     end
 ### Open the log file
-    log = File.read(file)
+    log = File.read(file).split("\n")
 ### If there's a copy file
     if File.exist?(oldlog)
 #### compare the first lines from each file.
-        if oldlog.split("\n").first == log.split("\n").first
-
-        end
+        oldlog = File.read(oldfile).split("\n")
+        if oldlog.first == log.first
+            log.each do |line|
+                i
+            end
 #--- If they differ, the log has been rotated since the last run.
+        else
+            # AGGH BUT WHAT IF THE LOG GETS ROTATED WHILE AN ERROR IS ON THE END
+            # Solutions: We could use 'inotify' to run the script on a specific
+            # file when it is updated
+            File.open(oldfile, 'w') { |oldfile| oldfile.write("")}
 ##### Blank out the copy
 #---- This will prevent the copy of the log growing infinitely long
 #--- Now we have two files to diff
 #### Diff the files and store the result into a variable
+            diff = []
+        end
     else
 ### Else
 #### Read in the whole thing to a variable (same variable as above)

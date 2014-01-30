@@ -1,5 +1,8 @@
 #!/usr/bin/env ruby
-require 'bundler/setup'
+
+#require 'bundler/setup'
+require 'optparse'
+
 # include all the project class files
 
 ## Read in options
@@ -7,7 +10,23 @@ require 'bundler/setup'
 #  --output_format  -- mail, nagios, details, etc
 #  --files=<string>  -- A string defining which files to check. If this option is left off, do all files
 # TODO: read in options
+options = {}
+OptionParser.new do |opts|
+    opts.banner = "Usage: log_check.rb [options]"
 
+    opts.on('-h', '--help') do
+        puts opts
+        exit
+    end
+
+    opts.on("-v", "--verbose") do |v|
+        options[:verbose] = v
+    end
+end.parse!
+
+
+p options # debugging
+p ARGV # debugging
 
 ## Read in config file
 # TODO: read in the config file - this defines what log files to look in, and what
@@ -15,14 +34,14 @@ require 'bundler/setup'
 
 ###########################
 #- NOTE: this approach is inspired by the existing check_log nagios script
-#- Essentially, it keeps a copy of the log from the last time it was run, 
+#- Essentially, it keeps a copy of the log from the last time it was run,
 #- compares the two, and only processes the differences.
 ###########################
 
 ## For each logfile
 ### Open the log file
 ### If there's a copy file
-#### compare the first lines from each file. 
+#### compare the first lines from each file.
 #--- If they differ, the log has been rotated since the last run.
 ##### Blank out the copy
 #---- This will prevent the copy of the log growing infinitely long
@@ -37,4 +56,3 @@ require 'bundler/setup'
 
 
 ## Once all the log files have been processed, use the options to determine what to do
-

@@ -10,23 +10,28 @@ require 'optparse'
 #  --output_format  -- mail, nagios, details, etc
 #  --files=<string>  -- A string defining which files to check. If this option is left off, do all files
 # TODO: read in options
-options = {}
+
+options = {:files => nil, :out => nil}
 OptionParser.new do |opts|
     opts.banner = "Usage: log_check.rb [options]"
 
-    opts.on('-h', '--help') do
+    opts.on('-h', '--help', 'This help information') do
         puts opts
         exit
     end
 
-    opts.on("-v", "--verbose") do |v|
-        options[:verbose] = v
+    opts.on('-o', '--output_format out', 'Mail, Nagios, details, etc') do |out|
+        options[:out] = out
+    end
+
+    # Currently this only takes one file, could be improved.
+    opts.on('-f', '--files filepath', 'The files to check') do |filepath|
+        options[:files] = filepath
     end
 end.parse!
 
 
 p options # debugging
-p ARGV # debugging
 
 ## Read in config file
 # TODO: read in the config file - this defines what log files to look in, and what

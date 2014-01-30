@@ -1,0 +1,14 @@
+---
+# sudo
+# The name of the file to check for errors:
+# This file is also the handle for the hash table
+"/home/pitserver/doto7679/Documents/sudo.log":
+# The file to check against to see if the error is new:
+- /home/pitserver/doto7679/Documents/sudo.log.old
+# The matcher to remove errors we don't care about:
+- /home/pitserver/doto7679/Documents/logcheck/lib/matchers/sudo.rb
+
+# zoomba
+"/home/pitserver/doto7679/Documents/zoomba.log":
+- oldfile: /home/pitserver/doto7679/Documents/zoomba.log.old
+- matcher: /home/pitserver/doto7679/Documents/logcheck/lib/matchers/zoomba.rb

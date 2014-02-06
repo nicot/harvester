@@ -32,17 +32,20 @@ OptionParser.new do |opts|
     end
 end.parse!
 
-## Read in config file
-
-config = YAML.load_file('etc/config.yaml')
+# check if command line specified file exists
 if options["file"]
-    if config.has_key?(options["file"])
-        config = {options["file"] => config[options["file"]]}
+    argfile = options["file"]
+    if config.has_key?(argfile)
+        config = {argfile => config[argfile]}
     else
-        puts "Error: file must be in etc/config.yaml"
+        puts "Error: ${argfile} must be in etc/config.yaml"
         exit
     end
 end
+
+## Read in config file
+config = YAML.load_file('etc/config.yaml')
+print config.inspect
 
 ###########################
 #- NOTE: this approach is inspired by the existing check_log nagios script

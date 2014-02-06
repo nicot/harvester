@@ -6,6 +6,7 @@
 #require 'bundler/setup'
 require 'optparse'
 require 'yaml'
+require 'lib/matcher.rb'
 
 # include all the project class files
 
@@ -53,18 +54,12 @@ config = YAML.load_file('etc/config.yaml')
 ###########################
 
 def diff(file, oldfile)
-    # Open the log file
     log = File.read(file).split("\n")
-    # If there's a copy file
     if File.exist?(oldfile)
-    # compare the first lines from each file.
         oldlog = File.read(oldfile).split("\n")
-        # If they differ, the log has been rotated since the last run.
         if oldlog.first != log.first
-            # Blank out the copy
             File.open(oldfile, 'w') { |zoomba| zoomba.write("")}
         end
-        # Diff the files and store the result into a variable
         log.each_with_index do |line, index|
             if !oldlog[index]
                 diff.append(line)
@@ -73,7 +68,6 @@ def diff(file, oldfile)
             end
         end
     else
-        # Read in the whole thing to a variable
         diff = log
     end
     return diff
@@ -91,11 +85,10 @@ config.each do |title, specs|
     if not File.exist?(file)
         next
     end
-    # Check the variable against each of the appropriate matchers (as defined in the config)
     # Should the matcher be defined in the config or the matchers.rb?
     diff = diff(file, oldfile)
     diff.each do |line|
-        # import the matcher file.
+        line = match(line)
         # match each line against every matcher.
         # I wonder if this is the most efficient way to do it.
         # if a line doesn't get tagged by any filters, it stays in diff
@@ -104,6 +97,7 @@ config.each do |title, specs|
     # Write out differences to the copy file
     # Close the file
     # Once all the log files have been processed, use the options to determine what to do
+    puts diff
 end
 # AGGH BUT WHAT IF THE LOG GETS ROTATED WHILE AN ERROR IS ON THE END
 # Solutions: We could use 'inotify' to run the script on a specific

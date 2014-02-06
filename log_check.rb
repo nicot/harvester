@@ -54,39 +54,43 @@ end
 config.each do |file, specs|
     oldfile = specs[0]
     matcher = specs[1]
+    diff = []
+    # if the file doesn't exist, thats ok, skip this loop.
     if not File.exist?(file)
-        print "File #{file} specified in etc/config.yaml does not exist"
-        exit
+        next
     end
-### Open the log file
+    # Open the log file
     log = File.read(file).split("\n")
-### If there's a copy file
+    # If there's a copy file
     if File.exist?(oldlog)
-#### compare the first lines from each file.
+    # compare the first lines from each file.
         oldlog = File.read(oldfile).split("\n")
-        if oldlog.first == log.first
-            log.each do |line|
-                i
+        # If they differ, the log has been rotated since the last run.
+        if oldlog.first != log.first
+            # Blank out the copy
+            File.open(oldfile, 'w') { |zoomba| zoomba.write("")}
+        end
+        # Diff the files and store the result into a variable
+        log.each_with_index do |line, index|
+            if !oldlog[index]
+                diff.append(line)
+            elsif line != oldlog[index]
+                diff.append(line)
             end
-#--- If they differ, the log has been rotated since the last run.
-        else
-            # AGGH BUT WHAT IF THE LOG GETS ROTATED WHILE AN ERROR IS ON THE END
-            # Solutions: We could use 'inotify' to run the script on a specific
-            # file when it is updated
-            File.open(oldfile, 'w') { |oldfile| oldfile.write("")}
-##### Blank out the copy
-#---- This will prevent the copy of the log growing infinitely long
-#--- Now we have two files to diff
-#### Diff the files and store the result into a variable
-            diff = []
         end
     else
-### Else
-#### Read in the whole thing to a variable (same variable as above)
-### Check the variable against each of the appropriate matchers (as defined in the config)
-### For Anything that matches, use the response for the matcher to determine what to do
-### Write out differences to the copy file
-### Close the file
+        # Read in the whole thing to a variable (same variable as above)
+        diff = log
     end
-## Once all the log files have been processed, use the options to determine what to do
+    # Check the variable against each of the appropriate matchers (as defined in the config)
+    diff.each do |line|
+        
+    end
+    # For Anything that matches, use the response for the matcher to determine what to do
+    # Write out differences to the copy file
+    # Close the file
+    # Once all the log files have been processed, use the options to determine what to do
 end
+# AGGH BUT WHAT IF THE LOG GETS ROTATED WHILE AN ERROR IS ON THE END
+# Solutions: We could use 'inotify' to run the script on a specific
+# file when it is updated

@@ -52,18 +52,7 @@ config = YAML.load_file('etc/config.yaml')
 #- compares the two, and only processes the differences.
 ###########################
 
-# For each logfile
-config.each do |title, specs|
-    # each of these is a string filepath
-    file = specs[0]
-    oldfile = specs[1]
-    matcher = specs[2]
-    diff = []
-
-    # if the file doesn't exist, thats ok, skip this loop.
-    if not File.exist?(file)
-        next
-    end
+def diff(file, oldfile)
     # Open the log file
     log = File.read(file).split("\n")
     # If there's a copy file
@@ -84,11 +73,27 @@ config.each do |title, specs|
             end
         end
     else
-        # Read in the whole thing to a variable (same variable as above)
+        # Read in the whole thing to a variable
         diff = log
+    end
+    return diff
+end
+
+# For each logfile
+config.each do |title, specs|
+    # each of these is a string filepath
+    file = specs[0]
+    oldfile = specs[1]
+    matcher = specs[2]
+    diff = []
+
+    # if the file doesn't exist, thats ok, skip this loop.
+    if not File.exist?(file)
+        next
     end
     # Check the variable against each of the appropriate matchers (as defined in the config)
     # Should the matcher be defined in the config or the matchers.rb?
+    diff = diff(file, oldfile)
     diff.each do |line|
         # import the matcher file.
         # match each line against every matcher.

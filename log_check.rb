@@ -45,7 +45,6 @@ end
 
 ## Read in config file
 config = YAML.load_file('etc/config.yaml')
-print config.inspect
 
 ###########################
 #- NOTE: this approach is inspired by the existing check_log nagios script
@@ -53,11 +52,14 @@ print config.inspect
 #- compares the two, and only processes the differences.
 ###########################
 
-## For each logfile
-config.each do |file, specs|
-    oldfile = specs[0]
-    matcher = specs[1]
+# For each logfile
+config.each do |title, specs|
+    # each of these is a string filepath
+    file = specs[0]
+    oldfile = specs[1]
+    matcher = specs[2]
     diff = []
+
     # if the file doesn't exist, thats ok, skip this loop.
     if not File.exist?(file)
         next
@@ -65,7 +67,7 @@ config.each do |file, specs|
     # Open the log file
     log = File.read(file).split("\n")
     # If there's a copy file
-    if File.exist?(oldlog)
+    if File.exist?(oldfile)
     # compare the first lines from each file.
         oldlog = File.read(oldfile).split("\n")
         # If they differ, the log has been rotated since the last run.

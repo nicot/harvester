@@ -83,8 +83,12 @@ config.each do |file, specs|
         diff = log
     end
     # Check the variable against each of the appropriate matchers (as defined in the config)
+    # Should the matcher be defined in the config or the matchers.rb?
     diff.each do |line|
-        
+        # import the matcher file.
+        # match each line against every matcher.
+        # I wonder if this is the most efficient way to do it.
+        # if a line doesn't get tagged by any filters, it stays in diff
     end
     # For Anything that matches, use the response for the matcher to determine what to do
     # Write out differences to the copy file

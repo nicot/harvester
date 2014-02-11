@@ -1,5 +1,8 @@
 # initialize matchers for all messages appearing in sudo.log
 def match(difference)
-    difference.push("HipHipHoorah")
-    return difference
+    difference.each do |line|
+        if /vim/ =~ line
+            difference.delete(line)
+        end
+    end
 end

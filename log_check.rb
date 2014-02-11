@@ -53,6 +53,7 @@ config = YAML.load_file('etc/config.yaml')
 ###########################
 
 def diff(file, oldfile)
+    problems = []
     log = File.read(file).split("\n")
     if File.exist?(oldfile)
         oldlog = File.read(oldfile).split("\n")
@@ -61,9 +62,9 @@ def diff(file, oldfile)
         end
         log.each_with_index do |line, index|
             if !oldlog[index]
-                diff.append(line)
+                problems.push(line)
             elsif line != oldlog[index]
-                diff.append(line)
+                problems.push(line)
             end
         end
     else
@@ -86,15 +87,15 @@ config.each do |title, specs|
     end
     # Should the matcher be defined in the config or the matchers.rb?
     errors = diff(file, oldfile)
-    diff.each do |line|
-        line = match(line)
+    errors.each do |line|
+        #line = match(line)
         # match each line against every matcher.
         # I wonder if this is the most efficient way to do it.
         # if a line doesn't get tagged by any filters, it stays in diff
     end
     # For Anything that matches, use the response for the matcher to determine what to do
     # Write out differences to the copy file
-    File.open(oldfile, 'w') { |handle| handle.write("")}
+    File.open(oldfile, 'w') { |handle| handle.write(File.read(file))}
     # Close the file
     # Once all the log files have been processed, use the options to determine what to do
     puts errors

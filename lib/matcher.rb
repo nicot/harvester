@@ -1,3 +1,4 @@
+# So this might be easier to avoid this file.
 class Matcher
 	def initialize(matchBlock, responseBlock)
 		# TODO: research blocks, procs, and lambdas

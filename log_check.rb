@@ -6,7 +6,6 @@
 #require 'bundler/setup'
 require 'optparse'
 require 'yaml'
-require 'lib/matcher.rb'
 
 # include all the project class files
 
@@ -58,7 +57,7 @@ def diff(file, oldfile)
     if File.exist?(oldfile)
         oldlog = File.read(oldfile).split("\n")
         if oldlog.first != log.first
-            File.open(oldfile, 'w') { |zoomba| zoomba.write("")}
+            File.open(oldfile, 'w') { |handle| handle.write("")}
         end
         log.each_with_index do |line, index|
             if !oldlog[index]
@@ -68,9 +67,9 @@ def diff(file, oldfile)
             end
         end
     else
-        diff = log
+        problems = log
     end
-    return diff
+    return problems
 end
 
 # For each logfile
@@ -79,14 +78,14 @@ config.each do |title, specs|
     file = specs[0]
     oldfile = specs[1]
     matcher = specs[2]
-    diff = []
+    errors = []
 
     # if the file doesn't exist, thats ok, skip this loop.
     if not File.exist?(file)
         next
     end
     # Should the matcher be defined in the config or the matchers.rb?
-    diff = diff(file, oldfile)
+    errors = diff(file, oldfile)
     diff.each do |line|
         line = match(line)
         # match each line against every matcher.
@@ -95,10 +94,8 @@ config.each do |title, specs|
     end
     # For Anything that matches, use the response for the matcher to determine what to do
     # Write out differences to the copy file
+    File.open(oldfile, 'w') { |handle| handle.write("")}
     # Close the file
     # Once all the log files have been processed, use the options to determine what to do
-    puts diff
+    puts errors
 end
-# AGGH BUT WHAT IF THE LOG GETS ROTATED WHILE AN ERROR IS ON THE END
-# Solutions: We could use 'inotify' to run the script on a specific
-# file when it is updated

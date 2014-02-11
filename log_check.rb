@@ -44,7 +44,7 @@ if options["file"]
 end
 
 ## Read in config file
-config = YAML.load_file('etc/config.yaml')
+configs = YAML.load_file('etc/config.yaml')
 
 ###########################
 #- NOTE: this approach is inspired by the existing check_log nagios script
@@ -73,27 +73,22 @@ def diff(file, oldfile)
     return problems
 end
 
-# For each logfile
-config.each do |title, specs|
+# For each config
+configs.each do |title, specs|
     # each of these is a string filepath
     file = specs[0]
     oldfile = specs[1]
     matcher = specs[2]
+
+    require matcher
     errors = []
 
     # if the file doesn't exist, thats ok, skip this loop.
     if not File.exist?(file)
         next
     end
-    # Should the matcher be defined in the config or the matchers.rb?
     errors = diff(file, oldfile)
-    errors.each do |line|
-        #line = match(line)
-        # match each line against every matcher.
-        # I wonder if this is the most efficient way to do it.
-        # if a line doesn't get tagged by any filters, it stays in diff
-    end
-    # For Anything that matches, use the response for the matcher to determine what to do
+    errors = match(errors)
     # Write out differences to the copy file
     File.open(oldfile, 'w') { |handle| handle.write(File.read(file))}
     # Close the file

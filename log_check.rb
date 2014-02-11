@@ -87,10 +87,11 @@ configs.each do |title, specs|
     if not File.exist?(file)
         next
     end
+
     errors = diff(file, oldfile)
+    # This match function is defined in the matcher file
     errors = match(errors)
     # Write out differences to the copy file
     File.open(oldfile, 'w') { |handle| handle.write(File.read(file))}
-    # Once all the log files have been processed, use the options to determine what to do
     puts errors
 end

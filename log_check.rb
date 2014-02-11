@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 
+# TODO configure for options
 # TODO get rid of all the bad hardcoded filepaths.
 # TODO figure out what bundler is for, and if we need it. I think we don't because
 # we don't have any gems except the testing one, and that doesn't need to be disted?
@@ -14,7 +15,10 @@ require 'yaml'
 #  --output_format  -- mail, nagios, details, etc
 #  --files=<string>  -- A string defining which files to check. If this option is left off, do all files
 
+exitcode = 0
+output = []
 options = {"file" => nil, "out" => nil}
+
 OptionParser.new do |opts|
     opts.banner = "Usage: log_check.rb [options]"
 
@@ -91,7 +95,24 @@ configs.each do |title, specs|
     errors = diff(file, oldfile)
     # This match function is defined in the matcher file
     errors = match(errors)
+    exitcode += errors.count
+    output.push(errors)
+
     # Write out differences to the copy file
     File.open(oldfile, 'w') { |handle| handle.write(File.read(file))}
-    puts errors
 end
+
+if exitcode > 2
+    exitcode = 2
+end
+if exitcode > 0
+    if options["out"] == "nagios"
+        puts "New unusual logs found."
+    elsif options["out"] == "mail"
+        # TODO this should probably mail somebody
+        puts output
+    else
+        puts output
+    end
+end
+exit exitcode

@@ -33,9 +33,6 @@ end
 # Read in config file
 configs = YAML.load_file('etc/config.yaml')
 
-exitcode = 0
-output = []
-
 def chunk(file, oldfile)
     newproblems = []
     log = File.read(file).split("\n")
@@ -57,25 +54,46 @@ def chunk(file, oldfile)
     return newproblems
 end
 
+output = []
+
+class Log
+    def self.new(specs)
+        @file = specs[0]
+        @oldfile = specs[1]
+        @matcher = specs[2]
+        @errors = Array.new
+        @exitcode = 0
+        require self.matcher
+    end
+
+    def matcher
+
+    end
+end
+
+loglist = Array.new
+
 # For each config
 configs.each do |title, specs|
+    loglist.push(Log.new(specs))
+end
+
+loglist.each do |current|
     # each of these is a string filepath
-    file = specs[0]
-    oldfile = specs[1]
-    matcher = specs[2]
+#    file = specs[0]
+#    oldfile = specs[1]
+#    matcher = specs[2]
 
     require matcher
-    errors = []
 
     # if the file doesn't exist, thats ok, skip this loop.
-    if not File.exist?(file)
+    if not current.file.exist?(file)
         next
     end
 
     errors = chunk(file, oldfile)
     # This match function is defined in the most recently imported file
     errors = match(errors)
-    exitcode += errors.count
     output.push(errors)
 
     # Write out differences to the copy file

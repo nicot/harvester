@@ -56,21 +56,6 @@ end
 
 output = []
 
-class Log
-    def self.new(specs)
-        @file = specs[0]
-        @oldfile = specs[1]
-        @matcher = specs[2]
-        @errors = Array.new
-        @exitcode = 0
-        require self.matcher
-    end
-
-    def matcher
-
-    end
-end
-
 loglist = Array.new
 
 # For each config
@@ -79,13 +64,6 @@ configs.each do |title, specs|
 end
 
 loglist.each do |current|
-    # each of these is a string filepath
-#    file = specs[0]
-#    oldfile = specs[1]
-#    matcher = specs[2]
-
-    require matcher
-
     # if the file doesn't exist, thats ok, skip this loop.
     if not current.file.exist?(file)
         next

@@ -3,6 +3,7 @@
 #require 'bundler/setup'
 require 'optparse'
 require 'yaml'
+load 'lib/matcher.rb'
 
 options = {"file" => nil, "out" => nil}
 OptionParser.new do |opts|
@@ -33,29 +34,7 @@ end
 # Read in config file
 configs = YAML.load_file('etc/config.yaml')
 
-def chunk(file, oldfile)
-    newproblems = []
-    log = File.read(file).split("\n")
-    if File.exist?(oldfile)
-        oldlog = File.read(oldfile).split("\n")
-        if oldlog.first != log.first
-            File.open(oldfile, 'w') { |handle| handle.write("")}
-        end
-        log.each_with_index do |line, index|
-            if !oldlog[index]
-                newproblems.push(line)
-            elsif line != oldlog[index]
-                newproblems.push(line)
-            end
-        end
-    else
-        newproblems = log
-    end
-    return newproblems
-end
-
-output = []
-
+output = Array.new
 loglist = Array.new
 
 # For each config
@@ -65,23 +44,14 @@ end
 
 loglist.each do |current|
     # if the file doesn't exist, thats ok, skip this loop.
-    if not current.file.exist?(file)
+    if not current.fileExist
         next
     end
 
-    errors = chunk(file, oldfile)
-    # This match function is defined in the most recently imported file
-    errors = match(errors)
-    output.push(errors)
-
-    # Write out differences to the copy file
-    File.open(oldfile, 'w') { |handle| handle.write(File.read(file))}
+    current.clean
 end
 
-if exitcode > 2
-    exitcode = 2
-end
-if exitcode > 0
+if output.length > 0
     if options["out"] == "nagios"
         puts "New unusual logs found."
     elsif options["out"] == "mail"
@@ -91,4 +61,4 @@ if exitcode > 0
         puts output
     end
 end
-exit exitcode
+#exit exitcode

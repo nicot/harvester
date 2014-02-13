@@ -1,8 +1,14 @@
 class Sudo
-    def match(difference)
-        difference.each do |line|
+    def match(newMessage)
+        newMessage.each do |line|
+            # Match each line
             if /vim/ =~ line
-                difference.delete(line)
+                # Take it out if we don't care
+                newMessage.delete(line)
+            end
+            if /jason/ =~ line
+                # Upgrade the priority if its scary
+                @exitcode = 2
             end
         end
     end

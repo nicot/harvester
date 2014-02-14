@@ -26,7 +26,7 @@ end.parse!
 # Read in config file
 configs = YAML.load_file('etc/config.yaml')
 
-# check if command line specified file exists in config
+# check if command line specified file exists in config, and if so, load it
 if options["file"]
     argfile = options["file"]
     if configs.has_key?(argfile)

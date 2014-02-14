@@ -2,13 +2,8 @@
 # Title of the config
 sudo:
 # log file to check
-- /home/pitserver/doto7679/Documents/sudo.log
+  file: ../sudo.log
 # old file to diff against
-- /home/pitserver/doto7679/Documents/sudo.log.old
+  old_file: ../sudo.log.old
 # matcher file to determine what errors should be screened out
-- /home/pitserver/doto7679/Documents/log_check/lib/matchers/sudo.rb
-
-zoomba:
-- /home/pitserver/doto7679/Documents/zoomba.log
-- /home/pitserver/doto7679/Documents/zoomba.log.old
-- /home/pitserver/doto7679/Documents/log_check/lib/matchers/zoomba.rb
+  matchers: [ 'SudoMatchers' ]

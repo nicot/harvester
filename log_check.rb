@@ -33,9 +33,8 @@ end
 
 # Read in config file
 configs = YAML.load_file('etc/config.yaml')
-
-output = Array.new
 loglist = Array.new
+output = Array.new
 
 # For each config
 configs.each do |title, specs|
@@ -47,7 +46,8 @@ loglist.each do |current|
     if not current.fileExist
         next
     end
-
+    current.chunk
+    current.importMatch
     current.clean
 end
 
@@ -61,4 +61,3 @@ if output.length > 0
         puts output
     end
 end
-#exit exitcode

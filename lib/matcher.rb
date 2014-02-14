@@ -5,28 +5,37 @@ class Log
         @matcher = specs[2]
         @errors = Array.new
         @exitcode = 0
-        require @matcher
     end
 
-    def chunk(file, oldfile)
-        newProblems = []
-        log = File.read(file).split("\n")
-        if File.exist?(oldfile)
-            oldlog = File.read(oldfile).split("\n")
+    def errors
+        return @errors
+    end
+
+    def importMatch
+        # This is not so great. If the adversary doesn't define matcher
+        # in the lib/matchers/*.rb we catch all errors defined by the
+        # last one.
+        load @matcher
+        match(@errors)
+    end
+
+    def chunk
+        log = File.read(@file).split("\n")
+        if File.exist?(@oldfile)
+            oldlog = File.read(@oldfile).split("\n")
             if oldlog.first != log.first
-                File.open(oldfile, 'w') { |handle| handle.write("")}
+                File.open(@oldfile, 'w') { |handle| handle.write("")}
             end
             log.each_with_index do |line, index|
                 if !oldlog[index]
-                    newProblems.push(line)
+                    @errors.push(line)
                 elsif line != oldlog[index]
-                    newProblems.push(line)
+                    @errors.push(line)
                 end
             end
         else
-            newProblems = log
+            @errors = log
         end
-        return newProblems
     end
 
     def fileExist

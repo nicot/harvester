@@ -18,8 +18,12 @@ OptionParser.new do |opts|
     opts.on('-o', '--output_format out', 'Mail, Nagios, details, etc') do |out|
         options["out"] = out
     end
-    opts.on('-f', '--file filepath', "Specifies a file to check") do |filepath|
+    opts.on('-f', '--file filepath', 'Specifies a file to check') do |filepath|
         options["file"] = filepath
+    end
+    opts.on('-v', '--verbose', 'Provides more output for debugging purposes')\
+        do |level|
+        debug_level = 2
     end
 end.parse!
 
@@ -32,7 +36,7 @@ if options["file"]
     if configs.has_key?(argfile)
         configs = {argfile => configs[argfile]}
     else
-        puts "Error: ${argfile} must be in etc/config.yaml"
+        puts "Error: #{argfile} must be in etc/config.yaml"
         exit
     end
 end
@@ -40,6 +44,7 @@ end
 matchesHash = {}
 
 ## For each logfile
+# Do we want to use all these unix commands when there are ruby equivalents?
 configs.each do |title, spec|
 	file = spec['file']
 	old_file = spec['old_file']
@@ -81,6 +86,7 @@ configs.each do |title, spec|
 		logfile_contents = `cat #{file}`
 	end
 	### Check the variable against each of the appropriate matchers (as defined in the config)
+    # I had no idea you could do either of these things. Nice.
 	matchers.each do |matcher|
 		require './lib/matchers/'+matcher+'.rb'
 		matchesHash[matcher] = eval(matcher).run(logfile_contents)
@@ -102,7 +108,7 @@ if matchesHash.length > 0
         puts "New unusual logs found."
     elsif options["out"] == "mail"
         # TODO this should probably format the output in an email-friendly way
-        puts output
+        puts output #debugging
     else
         pp matchesHash
     end

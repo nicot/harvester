@@ -35,15 +35,27 @@ class SudoMatchers
 	end
 
 	def self.userCount(array)
-		count = {}
-		array.each do |hash|
-			user = hash[:user]
-			if count[user] == nil
-				count[user] = 0
-			end
-			count[user] += 1
-		end
-		count
+		# Return a hash describing how many times a user shows up in the array
+
+		# All three options below do the same thing
+		# Option 1
+		#count = {}
+		#array.each do |hash|
+			#user = hash[:user]
+			#if count[user] == nil
+				#count[user] = 0
+			#end
+			#count[user] += 1
+		#end
+		#count
+
+		# Option 2
+		#users = testArray.map {|x| x[:user]}.group_by {|x|x}
+		#user_frequency = Hash[users.map {|k,v| [k, v.length]}]
+
+
+		# Option 3
+		array.map {|x| x[:user]}.inject(Hash.new(0)) { |h,v| h[v] += 1; h }
 	end
 
 	def self.getMatcher(id)

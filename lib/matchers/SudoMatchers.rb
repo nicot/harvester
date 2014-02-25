@@ -11,9 +11,41 @@ class SudoMatchers
 		matchesHash
 	end
 
-	#def self.respondToMatches(matchesHash)
-		#matchesHash[:notAuthorized].each do
-	#end
+	def self.good?(matchesHash, configs)
+		matchesHash.each do |id, array|
+			case id
+			when "notAuthorized"
+				userCountHash = self.userCount(array)
+				userCountHash.each do |user, count|
+					if configs["trustedUsers"].include? user
+						if count > 2
+							return false
+						end
+					else
+						return false
+					end
+				end
+			end
+		end
+		return true
+	end
+
+	def self.bad?(matchesHash)
+		! self.good?(matchesHash)
+	end
+
+
+	def self.userCount(array)
+		count = {}
+		array.each do |hash|
+			user = hash[:user]
+			if count[user] == nil
+				count[user] = 0
+			end
+			count[user] += 1
+		end
+		count
+	end
 
 	def self.getMatcher(id)
 		case id

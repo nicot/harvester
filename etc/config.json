@@ -1,4 +1,7 @@
 {
+	"matcherConfigs": {
+		"trustedUsers" : [ "kniffin", "schoelle", "thle5086" ]
+	},
 	"sudo" : {
 		"file" : "../sudo.log",
 		"old_file" : "../sudo.log.old",

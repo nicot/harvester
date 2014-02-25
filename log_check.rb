@@ -46,9 +46,16 @@ matchesHash = {}
 ## For each logfile
 # Do we want to use all these unix commands when there are ruby equivalents?
 configs.each do |title, spec|
+
+	if title == 'matcherConfigs'
+		next
+	end
+
+
 	file = spec['file']
 	old_file = spec['old_file']
 	matchers = spec['matchers']
+
 
 	### Check if the file exists
 	if !File.exist?(file) 
@@ -89,6 +96,7 @@ configs.each do |title, spec|
 	matchers.each do |matcherClass, matchers|
 		require './lib/matchers/'+matcherClass+'.rb'
 		matchesHash[matcherClass] = eval(matcherClass).findMatches(logfile_contents, matchers)
+		pp eval(matcherClass).good?(matchesHash[matcherClass], configs['matcherConfigs'])
 	end
 
 	### Write out differences to the copy file
@@ -107,6 +115,6 @@ if matchesHash.length > 0
         # TODO this should probably format the output in an email-friendly way
         puts output #debugging
     else
-        pp matchesHash
+        #pp matchesHash
     end
 end

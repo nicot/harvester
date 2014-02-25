@@ -10,30 +10,29 @@ class SudoMatchers
 		end
 		matchesHash
 	end
+	
 
-	def self.good?(matchesHash, configs)
+	def self.badStuff(matchesHash, configs)
+		badStuff = {}
 		matchesHash.each do |id, array|
 			case id
 			when "notAuthorized"
+				badStuff["notAuthorized"] = []
 				userCountHash = self.userCount(array)
 				userCountHash.each do |user, count|
 					if configs["trustedUsers"].include? user
-						if count > 2
-							return false
+						limit = 2
+						if count > limit
+							badStuff["notAuthorized"].push("trusted user " + user + " appears " + count.to_s + " time(s) (limit " + limit.to_s + ")")
 						end
 					else
-						return false
+						badStuff["notAuthorized"].push("user " + user + " appears " + count.to_s + " time(s)")
 					end
 				end
 			end
 		end
-		return true
+		return badStuff
 	end
-
-	def self.bad?(matchesHash)
-		! self.good?(matchesHash)
-	end
-
 
 	def self.userCount(array)
 		count = {}

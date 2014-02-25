@@ -86,13 +86,10 @@ configs.each do |title, spec|
 		logfile_contents = `cat #{file}`
 	end
 	### Check the variable against each of the appropriate matchers (as defined in the config)
-    # I had no idea you could do either of these things. Nice.
 	matchers.each do |matcherClass, matchers|
 		require './lib/matchers/'+matcherClass+'.rb'
-		matchesHash[matcherClass] = eval(matcherClass).run(logfile_contents, matchers)
+		matchesHash[matcherClass] = eval(matcherClass).findMatches(logfile_contents, matchers)
 	end
-
-
 
 	### Write out differences to the copy file
 	#File.open(old_file, 'a') { |handle| handle.write(logfile_contents)}

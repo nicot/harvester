@@ -1,15 +1,28 @@
 class SudoMatchers
-	def self.run(string, matchers)
+	def self.findMatches(string, matchers)
 		# This method should find all matches, and gather any important information about them,
 		#  such as user, command, etc
 		matchesHash = {}
 
-		# user NOT authorized on host
-		matchesHash[:notAuthorized] = string
-			.scan(/^(.*\s+sudo:\s+(.*)\s+:\s+user NOT authorized on host.*)$/)
-			.map{|full,user| {:full => full, :user => user}}
-
+		matchers.each do |matcher|
+			matcherBlock = getMatcher(matcher)
+			matchesHash[matcher] = matcherBlock.call(string)
+		end
 		matchesHash
+	end
+
+	#def self.respondToMatches(matchesHash)
+		#matchesHash[:notAuthorized].each do
+	#end
+
+	def self.getMatcher(id)
+		case id
+		when "notAuthorized"
+			return Proc.new do |string|
+				string.scan(/^(.*\s+sudo:\s+(.*)\s+:\s+user NOT authorized on host.*)$/)
+				.map{|full,user| {:full => full, :user => user}}
+			end
+		end
 	end
 end
 

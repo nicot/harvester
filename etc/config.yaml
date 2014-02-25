@@ -1,9 +1,0 @@
----
-# Title of the config
-sudo:
-# log file to check
-  file: ../sudo.log
-# old file to diff against
-  old_file: ../sudo.log.old
-# matcher file to determine what errors should be screened out
-  matchers: [ 'SudoMatchers' ]

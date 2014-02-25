@@ -1,0 +1,9 @@
+{
+	"sudo" : {
+		"file" : "../sudo.log",
+		"old_file" : "../sudo.log.old",
+		"matchers" : {
+			"SudoMatchers" : ["notAuthorized"]
+		}
+	}  
+}

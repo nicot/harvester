@@ -2,7 +2,7 @@
 
 #require 'bundler/setup'
 require 'optparse'
-require 'yaml'
+require 'json'
 require 'pp'
 load 'lib/matcher.rb'
 
@@ -28,7 +28,7 @@ OptionParser.new do |opts|
 end.parse!
 
 # Read in config file
-configs = YAML.load_file('etc/config.yaml')
+configs = JSON.load(IO.read('etc/config.json'))
 
 # check if command line specified file exists in config, and if so, load it
 if options["file"]
@@ -36,7 +36,7 @@ if options["file"]
     if configs.has_key?(argfile)
         configs = {argfile => configs[argfile]}
     else
-        puts "Error: #{argfile} must be in etc/config.yaml"
+        puts "Error: #{argfile} must be in etc/config.json"
         exit
     end
 end
@@ -87,9 +87,9 @@ configs.each do |title, spec|
 	end
 	### Check the variable against each of the appropriate matchers (as defined in the config)
     # I had no idea you could do either of these things. Nice.
-	matchers.each do |matcher|
-		require './lib/matchers/'+matcher+'.rb'
-		matchesHash[matcher] = eval(matcher).run(logfile_contents)
+	matchers.each do |matcherClass, matchers|
+		require './lib/matchers/'+matcherClass+'.rb'
+		matchesHash[matcherClass] = eval(matcherClass).run(logfile_contents, matchers)
 	end
 
 

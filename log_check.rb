@@ -5,6 +5,7 @@ require 'optparse'
 require 'json'
 require 'pp'
 load 'lib/matcher.rb'
+load 'lib/utils.rb'
 
 debug_level = 1 # Higher == more detail
 

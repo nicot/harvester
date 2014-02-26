@@ -10,11 +10,11 @@ class SudoMatchers < Matcher
 	end
 
 	def self.notAuthorizedResponder(matchesHash, configs)
-		array = matchesHash['notAuthorized']
+		array = matchesHash[:notAuthorized]
 
 		userCountHash = Utils.userCount(array)
 		userCountHash.each do |user, count|
-			if configs["trustedUsers"].include? user
+			if LogCheckConfig.trustedUsers.include? user
 				limit = 2
 				if count > limit
 					puts "trusted user " + user + " has " + count.to_s + " \"user NOT authorized on host\" messages (limit " + limit.to_s + ")"

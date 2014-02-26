@@ -55,7 +55,7 @@ class SudoMatchers
 
 
 		# Option 3
-		array.map {|x| x[:user]}.inject(Hash.new(0)) { |h,v| h[v] += 1; h }
+		array.map {|x| x[:user]}.inject(Hash.new(0)) { |hash,value| hash[value] += 1; hash }
 	end
 
 	def self.getMatcher(id)

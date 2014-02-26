@@ -21,6 +21,7 @@ OptionParser.new do |opts|
     opts.on('-f', '--file filepath', 'Specifies a file to check') do |filepath|
         options["file"] = filepath
     end
+    # TODO: Allow specifiying config file from cmd line
     opts.on('-v', '--verbose', 'Provides more output for debugging purposes')\
         do |level|
         debug_level = 2
@@ -126,6 +127,6 @@ if doPrint
         puts output #debugging
     else
     	pp badStuffHash
-        #pp matchesHash
+        pp matchesHash
     end
 end

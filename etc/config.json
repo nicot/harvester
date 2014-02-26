@@ -1,6 +1,6 @@
 {
 	"matcherConfigs": {
-		"trustedUsers" : [ "kniffin", "schoelle", "thle5086" ]
+		"trustedUsers" : [  ]
 	},
 	"sudo" : {
 		"file" : "../sudo.log",

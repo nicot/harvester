@@ -47,7 +47,6 @@ matchesHash = {}
 badStuffHash = {}
 
 ## For each logfile
-# Do we want to use all these unix commands when there are ruby equivalents?
 configs.each do |title, spec|
 
 	if title == 'matcherConfigs'
@@ -108,7 +107,4 @@ configs.each do |title, spec|
 
 	### Write out differences to the copy file
 	#File.open(old_file, 'a') { |handle| handle.write(logfile_contents)}
-
-	### Close the file
-	
 end

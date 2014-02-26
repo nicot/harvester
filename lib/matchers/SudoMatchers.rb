@@ -25,10 +25,3 @@ class SudoMatchers < Matcher
 		end
 	end
 end
-
-
-# class SudoMatcher < Matcher
-# 	def matches?(string)
-# 		string.scan(/^.*user NOT in sudoers.*$/)
-# 	end
-# end

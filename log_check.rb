@@ -58,6 +58,7 @@ configs.each do |title, spec|
 	file = spec['file']
 	old_file = spec['old_file']
 	matchers = spec['matchers']
+	responders = spec['responders']
 
 
 	### Check if the file exists
@@ -99,7 +100,10 @@ configs.each do |title, spec|
 	matchers.each do |matcherClass, matchers|
 		require './lib/matchers/'+matcherClass+'.rb'
 		matchesHash[matcherClass] = eval(matcherClass).findMatches(logfile_contents, matchers)
-		badStuffHash[matcherClass] = eval(matcherClass).badStuff(matchesHash[matcherClass], configs['matcherConfigs'])
+	end
+	responders.each do |responderClass, responders|
+		require './lib/matchers/'+responderClass+'.rb'
+		eval(responderClass).processMatches(matchesHash[responderClass], responders, configs['matcherConfigs'])
 	end
 
 	### Write out differences to the copy file
@@ -107,27 +111,4 @@ configs.each do |title, spec|
 
 	### Close the file
 	
-end
-
-doPrint = false
-badStuffHash.each do |key, subHash|
-	subHash.each do |key2, array|
-		if array.length > 0
-			doPrint = true
-		end
-		break if doPrint
-	end
-	break if doPrint
-end
-
-if doPrint
-    if options["out"] == "nagios"
-        puts "New unusual logs found."
-    elsif options["out"] == "mail"
-        # TODO this should probably format the output in an email-friendly way
-        puts output #debugging
-    else
-    	pp badStuffHash
-        pp matchesHash
-    end
 end

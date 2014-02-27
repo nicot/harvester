@@ -30,7 +30,11 @@ end.parse!
 
 # Read in config file
 # TODO: Wrap this in something like a try/catch (rescue?)
-eval(File.open('./etc/config.rb').read) # Creates LogConfigs
+begin
+    eval(File.open('./etc/config.rb').read) # Creates LogConfigs
+rescue
+    puts "'./etc/config.rb' has a syntax error"
+end
 
 # check if command line specified file exists in config, and if so, load it
 #if options["file"]

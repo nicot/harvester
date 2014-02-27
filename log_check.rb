@@ -9,7 +9,7 @@ require './lib/utils.rb'
 
 debug_level = 1 # Higher == more detail
 
-options = {"file" => nil, "out" => nil}
+options = {"file" => nil, "out" => nil, "config" => "./etc/config.rb"}
 OptionParser.new do |opts|
     opts.banner = "Usage: log_check.rb [options]"
     opts.on('-h', '--help', 'This help information') do
@@ -22,7 +22,9 @@ OptionParser.new do |opts|
     opts.on('-f', '--file filepath', 'Specifies a file to check') do |filepath|
         options["file"] = filepath
     end
-    # TODO: Allow specifiying config file from cmd line
+    opts.on('-c', '--config config', 'Specifies a file to check') do |config|
+        options["config"] = config
+    end
     opts.on('-v', '--verbose', 'Provides more output for debugging purposes') do |level|
         debug_level = 2
     end
@@ -30,7 +32,7 @@ end.parse!
 
 # Read in config file
 # TODO: Wrap this in something like a try/catch (rescue?)
-eval(File.open('./etc/config.rb').read) # Creates LogConfigs
+eval(File.open(options["config"]).read) # Creates LogConfigs
 
 # check if command line specified file exists in config, and if so, load it
 #if options["file"]

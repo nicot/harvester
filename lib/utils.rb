@@ -12,14 +12,6 @@ module Utils
 		matchesHash
 	end
 
-	def self.processMatches(matchesHash, responders, configs)
-		# This method should take in the hash of matches, a list of responder methods
-		# and some configs. It should run those responders, which will print stuff
-		responders.each do |responder|
-			responder.call matchesHash, configs
-		end
-	end
-
 	def self.userCount(array)
 		# Given an array like this:
 		# [{:full=> "some long string of stuff", :user=> "kniffin"},

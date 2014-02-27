@@ -35,17 +35,17 @@ end.parse!
 eval(File.open(options["config"]).read) # Creates LogConfigs
 
 # check if command line specified file exists in config, and if so, load it
-#if options["file"]
-    #argfile = options["file"]
-    #if configs.has_key?(argfile)
-        #configs = {argfile => configs[argfile]}
-    #else
-        #puts "Error: #{argfile} must be in etc/config.json"
-        #exit
-    #end
-#end
+if options["file"]
+    argfile = options["file"]
+    if $logConfigs.has_key?(argfile)
+        $logConfigs = {argfile => $logConfigs[argfile]}
+    else
+        puts "Error: #{argfile} must be in the config file"
+        exit
+    end
+end
 
-LogConfigs.each do |file, config|
+$logConfigs.each do |file, config|
 	old_file = file + ".old"
 	
 
@@ -54,7 +54,7 @@ LogConfigs.each do |file, config|
 	### Check if the file exists
 	if !File.exist?(file) 
 		if debug_level > 0
-			puts "The log file for "+title+" does not exist."
+			puts "The log file "+file+" does not exist."
 		end
 		next
 	end

@@ -16,9 +16,6 @@ OptionParser.new do |opts|
         puts opts
         exit
     end
-    opts.on('-o', '--output_format out', 'Mail, Nagios, details, etc') do |out|
-        options["out"] = out
-    end
     opts.on('-f', '--file filepath', 'Specifies a file to check') do |filepath|
         options["file"] = filepath
     end
@@ -31,7 +28,6 @@ OptionParser.new do |opts|
 end.parse!
 
 # Read in config file
-# TODO: Wrap this in something like a try/catch (rescue?)
 begin
     eval(File.open(options["config"]).read) # Creates LogConfigs
 rescue
@@ -50,12 +46,13 @@ if options["file"]
 end
 
 $logConfigs.each do |file, config|
-	old_file = file + ".old"
+	copy_file = file + ".copy"
 	
 
 	##############################################
 	#### Read in the new part of the log file
-	### Check if the file exists
+
+	# Check if the log file exists
 	if !File.exist?(file) 
 		if debug_level > 0
 			puts "The log file "+file+" does not exist."
@@ -63,31 +60,38 @@ $logConfigs.each do |file, config|
 		next
 	end
 
-	### Open the log file, and read the first line
+	# TODO: In the following block, replace shell commands with ruby code
+	#  The only one to watch out for is "wc -l" we don't want to accidentally 
+	#  read the whole file; it could potentially be a LOT of lines
+
+	# Open the log file, and read the first line
 	log_firstline = `head -1 #{file}`
 	logfile_contents = ""
 
-	### If there's a copy file
-	if (File.exist?(old_file))
-		### Read the first line from the oldlog file
-		oldlog_firstline = `head -1 #{old_file}`
-		#### compare the first lines from each file. 
-		#--- If they differ, the log has been rotated since the last run.
-		if (log_firstline != oldlog_firstline)
-			##### Blank out the copy
-			#---- This will prevent the copy of the log growing infinitely long
-			File.open(old_file, 'w') { |handle| handle.write("")}
+	# If there's a copy file
+	if (File.exist?(copy_file))
+		# Read the first line from the copy file
+		copyfile_firstline = `head -1 #{copy_file}`
+
+		# compare the first lines from each file. 
+		if (log_firstline != copyfile_firstline)
+			# If they differ, the log has been rotated since the last run.
+
+			# So, we should blank out the copy
+			File.open(copy_file, 'w') { |handle| handle.write("")}
+			# This will prevent the copy of the log growing infinitely long
 		end
-		#--- Now we have two files to diff
-		#### Diff the files and store the result into a variable
+		# Now we need to "diff" the files and store the result into a variable
+		# iow: only grab the new log messages (since the last time this script ran)
+		
 		# An easy way to do this is to count the number of lines in the copy file, 
 		#  and take that many lines off the top of the real file, then use the rest
-		oldfile_linecount = %x{wc -l #{old_file}}.split.first.to_i
-		logfile_contents = `tail -n +#{oldfile_linecount+1} #{file}`
+		copyfile_linecount = %x{wc -l #{copy_file}}.split.first.to_i
+		logfile_contents = `tail -n +#{copyfile_linecount+1} #{file}`
 
-	### Else
+	# Else
 	else
-		#### Read in the whole thing to a variable (same variable as above)
+		# Read in the whole thing to a variable (same variable as above)
 		logfile_contents = `cat #{file}`
 	end
 	##############################################
@@ -103,7 +107,7 @@ $logConfigs.each do |file, config|
 	# Pass the appropriate subset of matches into each responder
 	config.each do |mrSet|
 		matcherNames = mrSet[:matchers].map{|method| method.name}
-		relevantMatches = allMatches.select {|k,v| matcherNames.include? k}.values.flatten
+		relevantMatches = allMatches.select {|name,matches| matcherNames.include? name}.values.flatten
 
 		responders = mrSet[:responders]
 		responders.each do |responder|
@@ -117,7 +121,8 @@ $logConfigs.each do |file, config|
 	##############################################
 	##############################################
 	#### Write out differences to the copy file
-	# This is commented out for development
-	#File.open(old_file, 'a') { |handle| handle.write(logfile_contents)}
+	# This is commented out for development, so that we don't
+	#  have to empty the copy logfile every time
+	#File.open(copy_file, 'a') { |handle| handle.write(logfile_contents)}
 	##############################################
 end

@@ -1,7 +1,7 @@
 require './lib/matchers/SudoMatchers.rb'
 require './lib/matchers/KernMatchers.rb'
 
-LogConfigs = {
+$logConfigs = {
 	"../sudo.log" => [
 		{
 			:matchers => [

@@ -1,4 +1,5 @@
 require './lib/matchers/SudoMatchers.rb'
+require './lib/matchers/KernMatchers.rb'
 
 LogConfigs = {
 	"../sudo.log" => [
@@ -19,7 +20,17 @@ LogConfigs = {
 		 		Responders.method(:notAuthorizedResponder)
 		 	]
 		}
-	]
+	],
+    "../kern.log" => [
+        {
+            :matchers => [
+                Matchers.method(:brick)
+           ],
+            :responders => [
+                Responders.method(:brickResponder)
+            ]
+        }
+    ]
 }
 
 # The idea here should be that we will run a bunch of matchers, that pull out pieces into a hash;

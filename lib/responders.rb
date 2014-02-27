@@ -13,4 +13,11 @@ module Responders
 			end
 		end
 	end
+
+    def self.brickResponder(matches)
+        if matches[0]
+            device = matches[0][:device]
+            puts "Looks like " + device + " isn't responding to input"
+        end
+    end
 end

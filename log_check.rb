@@ -3,11 +3,13 @@
 #require 'bundler/setup'
 require 'optparse'
 require 'pp'
+require 'pry'
 require './lib/Match.rb'
 require './lib/MatchSet.rb'
 require './lib/Matcher.rb'
 require './lib/Responder.rb'
 require './lib/Utils.rb'
+require './lib/matchers/CatchAllMatcher.rb'
 
 debug_level = 1 # Higher == more detail
 
@@ -109,6 +111,11 @@ $logConfigs.each do |file, config|
 	# Get all the matchers
 	allMatchers = config.map{|x| x[:matchers]}.flatten.uniq
 
+	# If we want to do a filter behavior, add CatchAllMatcher
+	if config.map{|x| x[:behavior]}.include? :filter
+		allMatchers.push(CatchAllMatcher.new)
+	end
+
 	# Run those matchers and store the results
 	allMatches = {}
 	allMatchers.each do |matcher|
@@ -130,6 +137,12 @@ $logConfigs.each do |file, config|
 			.select{|name,matches| matcherNames.include? name}
 			.values
 			.map{|matchset| matchset.matches}.flatten)
+		
+		if mrSet[:behavior] == :filter
+			relevantMatches = MatchSet.new(
+				allMatches["CatchAllMatcher"].matches - relevantMatches.matches
+			)
+		end
 
 		responders = mrSet[:responders]
 		responders.each do |responder|

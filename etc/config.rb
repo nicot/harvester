@@ -16,7 +16,8 @@ $logConfigs = {
 			],
 		 	:responders => [
 		 		SudoResponder.new
-		 	]
+		 	],
+		 	:behavior => :filter
 		}
 	],
 	"../kern.log" => [

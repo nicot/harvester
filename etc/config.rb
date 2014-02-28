@@ -5,16 +5,17 @@ require './lib/matchers/kernel/RejectingIOToOfflineDeviceMatcher.rb'
 
 #Responders
 require './lib/responders/DefaultResponder.rb'
+require './lib/responders/SudoResponder.rb'
 
 $logConfigs = {
 	"../sudo.log" => [
 		{
 			:matchers => [
-				NotAuthorizedMatcher.new,
-				NotInSudoersMatcher.new
+				NotAuthorizedMatcher.new
+				#NotInSudoersMatcher.new
 			],
 		 	:responders => [
-		 		DefaultResponder.new
+		 		SudoResponder.new
 		 	]
 		}
 	],

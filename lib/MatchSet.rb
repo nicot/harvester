@@ -1,19 +1,18 @@
 class MatchSet
-	@matches
-	def initialize(array=[])
-		@matches = array
-	end
-	def append(obj)
-		if obj.is_a?(Match)
-			@matches.push(obj)
+	attr_reader :matches
+	def initialize(obj)
+		# TODO: Verify these are Matches
+		@matches = []
+		if obj.is_a?(Array)
+			@matches |= obj
 		elsif obj.is_a?(MatchSet)
-			@matches |= MatchSet.matches
+			@matches |= obj.matches
 		else
-			raise "Cannot append #{obj.class.name} to MatcheSet"
+			raise "Cannot create MatchSet from #{obj.class.name}"
 		end
 	end
-	def matches
-		@matches
+	def append(obj)
+		
 	end
 	def full_errors
 		@matches.map { |match| match.full_error }

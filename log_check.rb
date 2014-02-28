@@ -120,8 +120,11 @@ $logConfigs.each do |file, config|
 	# Pass the appropriate subset of matches into each responder
 	config.each do |mrSet|
 		matcherNames = mrSet[:matchers].map{|matcher| matcher.class.name}
-		relevantMatches = allMatches.select {|name,matches| matcherNames.include? name}
-			.inject(MatchSet.new) {|matchset, (name,matches)| matches}
+		
+		relevantMatches = MatchSet.new(allMatches
+			.select{|name,matches| matcherNames.include? name}
+			.values
+			.map{|matchset| matchset.matches}.flatten)
 
 		responders = mrSet[:responders]
 		responders.each do |responder|

@@ -66,6 +66,12 @@ $logConfigs.each do |file, config|
 	#  The only one to watch out for is "wc -l" we don't want to accidentally 
 	#  read the whole file; it could potentially be a LOT of lines
 
+	# NOTE: One flaw with doing things this way is that we end up reading the 
+	# whole file into memory. We could potentially run into memory limitations.
+	# An alternative to explore at some point would be to change the workflow 
+	# to a streaming method, where, as we read in the file, we run the matchers 
+	# and then the responders.
+
 	# Open the log file, and read the first line
 	log_firstline = `head -1 #{file}`
 	logfile_contents = ""

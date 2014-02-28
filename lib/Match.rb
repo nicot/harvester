@@ -1,7 +1,13 @@
 class Match
 	attr_reader :attribs
 	def initialize(hash)
-		# TODO: Verify :full key exists, and other assumptions
+		# sanity checks
+		if ! hash.is_a?(Hash)
+			raise "Unexpected argument type"
+		end
+		if ! hash[:full]
+			raise "input hash is missing :full key (the full log message)"
+		end
 		@attribs = hash
 	end
 	def full_error

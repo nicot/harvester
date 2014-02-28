@@ -1,18 +1,21 @@
 class MatchSet
 	attr_reader :matches
 	def initialize(obj)
-		# TODO: Verify these are Matches
 		@matches = []
 		if obj.is_a?(Array)
-			@matches |= obj
+			# Verify the array only consists of Match objects, and then push them into @matches
+			obj.each do |element|
+				if element.is_a?(Match)
+					@matches.push(element)
+				else
+					raise "MatchSets can only be comprised of Matches, not #{element.class.name}"
+				end
+			end
 		elsif obj.is_a?(MatchSet)
 			@matches |= obj.matches
 		else
 			raise "Cannot create MatchSet from #{obj.class.name}"
 		end
-	end
-	def append(obj)
-		
 	end
 	def full_errors
 		@matches.map { |match| match.full_error }

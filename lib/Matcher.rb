@@ -4,7 +4,8 @@ class Matcher
 		raise NotImplementedError.new("You must implement #{name}.")
 	end
 
-	def package(array)
-		MatchSet.new(array.map{|hash| Match.new(hash)})
-	end
+	private
+		def package(array)
+			MatchSet.new(array.map{|hash| Match.new(hash)})
+		end
 end

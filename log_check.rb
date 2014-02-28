@@ -3,7 +3,6 @@
 #require 'bundler/setup'
 require 'optparse'
 require 'pp'
-require 'pry'
 require './lib/Match.rb'
 require './lib/MatchSet.rb'
 require './lib/Matcher.rb'

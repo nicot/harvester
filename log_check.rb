@@ -3,9 +3,12 @@
 #require 'bundler/setup'
 require 'optparse'
 require 'pp'
-require './lib/matchers.rb'
-require './lib/responders.rb'
-require './lib/utils.rb'
+require 'pry'
+require './lib/Match.rb'
+require './lib/MatchSet.rb'
+require './lib/Matcher.rb'
+require './lib/Responder.rb'
+require './lib/Utils.rb'
 
 debug_level = 1 # Higher == more detail
 
@@ -100,18 +103,29 @@ $logConfigs.each do |file, config|
 
 	# Get all the matchers
 	allMatchers = config.map{|x| x[:matchers]}.flatten.uniq
+
 	# Run those matchers and store the results
-	allMatches = Utils.findMatches(logfile_contents, allMatchers)
+	allMatches = {}
+	allMatchers.each do |matcher|
+		# This line basically says:
+		#  run the method who's name is in the matcher, with the argument string
+		result = matcher.match(logfile_contents)
+		if (! result.is_a?(MatchSet))
+			raise "matcher #{matcher.class.name} returned a #{result.class}. It should be a MatchSet"
+		end
+		allMatches[matcher.class.name] = result
+	end
 
 
 	# Pass the appropriate subset of matches into each responder
 	config.each do |mrSet|
-		matcherNames = mrSet[:matchers].map{|method| method.name}
-		relevantMatches = allMatches.select {|name,matches| matcherNames.include? name}.values.flatten
+		matcherNames = mrSet[:matchers].map{|matcher| matcher.class.name}
+		relevantMatches = allMatches.select {|name,matches| matcherNames.include? name}
+			.inject(MatchSet.new) {|matchset, (name,matches)| matches}
 
 		responders = mrSet[:responders]
 		responders.each do |responder|
-			responder.call relevantMatches
+			responder.respond(relevantMatches)
 		end
 	end
 

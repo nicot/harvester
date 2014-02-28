@@ -1,17 +1,4 @@
 module Utils
-	def self.findMatches(string, matchers)
-		# This method should find all matches, and gather any important information about them,
-		#  such as user, command, etc
-		matchesHash = {}
-
-		matchers.each do |matcher|
-			# This line basically says:
-			#  run the method who's name is in the matcher, with the argument string
-			matchesHash[matcher.name] = matcher.call string
-		end
-		matchesHash
-	end
-
 	def self.userCount(array)
 		# Given an array like this:
 		# [{:full=> "some long string of stuff", :user=> "kniffin"},

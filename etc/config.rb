@@ -1,42 +1,31 @@
-require './lib/matchers/SudoMatchers.rb'
-require './lib/matchers/KernMatchers.rb'
+#Matchers
+require './lib/matchers/sudo/NotAuthorizedMatcher.rb'
+require './lib/matchers/sudo/NotInSudoersMatcher.rb'
+require './lib/matchers/kernel/RejectingIOToOfflineDeviceMatcher.rb'
+
+#Responders
+require './lib/responders/DefaultResponder.rb'
 
 $logConfigs = {
 	"../sudo.log" => [
 		{
 			:matchers => [
-				Matchers.method(:notAuthorized),
-				Matchers.method(:notInSudoers)
+				NotAuthorizedMatcher.new,
+				NotInSudoersMatcher.new
 			],
 		 	:responders => [
-		 		Responders.method(:notAuthorizedResponder)
-		 	]
-		},
-		{
-			:matchers => [
-				Matchers.method(:notAuthorized)
-			],
-		 	:responders => [
-		 		Responders.method(:notAuthorizedResponder)
+		 		DefaultResponder.new
 		 	]
 		}
 	],
-    "../kern.log" => [
-        {
-            :matchers => [
-                Matchers.method(:brick)
-           ],
-            :responders => [
-                Responders.method(:brickResponder)
-            ]
-        }
-    ]
+	"../kern.log" => [
+		{
+			:matchers => [
+				RejectingIOToOfflineDeviceMatcher.new
+			],
+			:responders => [
+				DefaultResponder.new
+			]
+		}
+	]
 }
-
-# The idea here should be that we will run a bunch of matchers, that pull out pieces into a hash;
-# Then, we run a bunch of responders on various pieces of that hash, based on the config above
-
-## Workflow ##
-# 1. Pull out all the matchers from above
-# 2. Run them all
-# 3. Run the various responders with the data relevant to them

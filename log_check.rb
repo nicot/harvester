@@ -3,7 +3,6 @@
 #require 'bundler/setup'
 require 'optparse'
 require 'pp'
-require 'pry'
 require './lib/Match.rb'
 require './lib/MatchSet.rb'
 require './lib/Matcher.rb'
@@ -133,15 +132,17 @@ $logConfigs.each do |file, config|
 	config.each do |mrSet|
 		matcherNames = mrSet[:matchers].map{|matcher| matcher.class.name}
 		
-		relevantMatches = MatchSet.new(allMatches
+		matcherMatches = MatchSet.new(allMatches
 			.select{|name,matches| matcherNames.include? name}
 			.values
 			.map{|matchset| matchset.matches}.flatten)
 		
 		if mrSet[:behavior] == :filter
-			relevantMatches = MatchSet.new(
-				allMatches["CatchAllMatcher"].matches - relevantMatches.matches
-			)
+			# If we want to filter, basically do an array subtraction
+			# (<everything> - <matches>)
+			relevantMatches = allMatches["CatchAllMatcher"] - matcherMatches
+		else
+			relevantMatches = matcherMatches
 		end
 
 		responders = mrSet[:responders]

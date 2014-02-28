@@ -11,6 +11,12 @@ class Match
 		@attribs = hash
 	end
 	def full_error
-		@attribs[:full] || ""
+		@attribs[:full]
+	end
+	def hash
+		@attribs.hash
+	end
+	def eql?(other)
+		@attribs.eql? other.attribs
 	end
 end

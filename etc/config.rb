@@ -1,6 +1,7 @@
 #Matchers
 require './lib/matchers/sudo/NotAuthorizedMatcher.rb'
 require './lib/matchers/sudo/NotInSudoersMatcher.rb'
+require './lib/matchers/sudo/RMTEInfoFilterMatcher.rb'
 require './lib/matchers/kernel/RejectingIOToOfflineDeviceMatcher.rb'
 
 #Responders
@@ -11,11 +12,12 @@ $logConfigs = {
 	"../sudo.log" => [
 		{
 			:matchers => [
-				NotAuthorizedMatcher.new
+				RMTEInfoFilterMatcher.new
+				#NotAuthorizedMatcher.new
 				#NotInSudoersMatcher.new
 			],
 		 	:responders => [
-		 		SudoResponder.new
+		 		DefaultResponder.new
 		 	],
 		 	:behavior => :filter
 		}

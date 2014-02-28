@@ -20,4 +20,13 @@ class MatchSet
 	def full_errors
 		@matches.map { |match| match.full_error }
 	end
+
+	def -(other)
+		if other.is_a?(MatchSet)
+			MatchSet.new(@matches - other.matches)
+		else
+			raise "Cannot subtract #{other.class.name} from MatchSet"
+		end
+	end
+
 end

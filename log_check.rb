@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
 
-#require 'bundler/setup'
 require 'optparse'
 require 'pp'
 require './lib/Match.rb'
@@ -9,8 +8,6 @@ require './lib/Matcher.rb'
 require './lib/Responder.rb'
 require './lib/Utils.rb'
 require './lib/matchers/CatchAllMatcher.rb'
-
-debug_level = 1 # Higher == more detail
 
 options = {"file" => nil, "out" => nil, "config" => "./etc/config.rb"}
 OptionParser.new do |opts|

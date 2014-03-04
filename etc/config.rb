@@ -5,8 +5,7 @@ require './lib/matchers/sudo/RMTEInfoFilterMatcher.rb'
 require './lib/matchers/kernel/RejectingIOToOfflineDeviceMatcher.rb'
 
 #Responders
-require './lib/responders/DefaultResponder.rb'
-require './lib/responders/SudoResponder.rb'
+require './lib/Responder.rb'
 
 $logConfigs = {
 	"../sudo.log" => [

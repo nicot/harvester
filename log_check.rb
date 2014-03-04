@@ -63,10 +63,6 @@ $logConfigs.each do |file, config|
 		next
 	end
 
-	# TODO: In the following block, replace shell commands with ruby code
-	#  The only one to watch out for is "wc -l" we don't want to accidentally 
-	#  read the whole file; it could potentially be a LOT of lines
-
 	# NOTE: One flaw with doing things this way is that we end up reading the 
 	# whole file into memory. We could potentially run into memory limitations.
 	# An alternative to explore at some point would be to change the workflow 
@@ -74,13 +70,13 @@ $logConfigs.each do |file, config|
 	# and then the responders.
 
 	# Open the log file, and read the first line
-	log_firstline = `head -1 #{file}`
+	log_firstline = File.open(file, 'r') { |handle| handle.readline()}
 	logfile_contents = ""
 
 	# If there's a copy file
 	if (File.exist?(copy_file))
 		# Read the first line from the copy file
-		copyfile_firstline = `head -1 #{copy_file}`
+		copyfile_firstline = File.open(file, 'r') { |handle| handle.readline()}
 
 		# compare the first lines from each file. 
 		if (log_firstline != copyfile_firstline)

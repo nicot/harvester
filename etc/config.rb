@@ -1,8 +1,8 @@
 #Matchers
-require './lib/matchers/sudo/NotAuthorizedMatcher.rb'
-require './lib/matchers/sudo/NotInSudoersMatcher.rb'
-require './lib/matchers/sudo/RMTEInfoFilterMatcher.rb'
-require './lib/matchers/kernel/RejectingIOToOfflineDeviceMatcher.rb'
+require './lib/matchers/NotAuthorizedMatcher.rb'
+require './lib/matchers/NotInSudoersMatcher.rb'
+require './lib/matchers/RMTEInfoFilterMatcher.rb'
+require './lib/matchers/RejectingIOToOfflineDeviceMatcher.rb'
 
 #Responders
 require './lib/Responder.rb'
@@ -12,11 +12,9 @@ $logConfigs = {
 		{
 			:matchers => [
 				RMTEInfoFilterMatcher.new
-				#NotAuthorizedMatcher.new
-				#NotInSudoersMatcher.new
 			],
 		 	:responders => [
-		 		DefaultResponder.new
+		 		Email.new
 		 	],
 		 	:behavior => :filter
 		}
@@ -27,7 +25,7 @@ $logConfigs = {
 				RejectingIOToOfflineDeviceMatcher.new
 			],
 			:responders => [
-				DefaultResponder.new
+				Email.new
 			]
 		}
 	]

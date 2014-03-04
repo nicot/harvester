@@ -4,10 +4,9 @@ require 'optparse'
 require 'pp'
 require './lib/Match.rb'
 require './lib/MatchSet.rb'
-require './lib/Matcher.rb'
+require './lib/matchers/Matcher.rb'
 require './lib/Responder.rb'
 require './lib/Utils.rb'
-require './lib/matchers/CatchAllMatcher.rb'
 
 options = {"file" => nil, "out" => nil, "config" => "./etc/config.rb"}
 OptionParser.new do |opts|

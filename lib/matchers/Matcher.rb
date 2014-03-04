@@ -9,3 +9,8 @@ class Matcher
 			MatchSet.new(array.map{|hash| Match.new(hash)})
 		end
 end
+class CatchAllMatcher < Matcher
+	def match(string)
+		package(string.scan(/^(.*)$/).map{|full| {:full => full}})
+	end
+end

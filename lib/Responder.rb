@@ -5,10 +5,16 @@ class Responder
 	end
 end
 
-class DefaultResponder < Responder
+class Email < Responder
 	def respond(matchSet)
 		puts matchSet.full_errors.join("\n")
 	end
+end
+
+class Nagios < Responder
+    def respond(matchSet)
+        puts matchSet.status
+    end
 end
 
 # Custom responder with complex logic for sudo log, with trusted users, etc

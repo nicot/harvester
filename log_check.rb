@@ -77,9 +77,8 @@ $logConfigs.each do |file, config|
 			File.open(copy_file, 'w') { |handle| handle.write("")}
 			# This will prevent the copy of the log growing infinitely long
 		end
-		# iow: only grab the new log messages (since the last time this script ran)
-		# An easy way to do this is to count the number of lines in the copy file, 
-		#  and take that many lines off the top of the real file, then use the rest
+		# I'd prefer to use ruby commands for this, but this is the best way to
+        # do it without implementing file stream reading in Ruby.
 		copyfile_linecount = %x{wc -l #{copy_file}}.split.first.to_i
 		logfile_contents = `tail -n +#{copyfile_linecount+1} #{file}`
 	# Else

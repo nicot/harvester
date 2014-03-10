@@ -3,7 +3,6 @@
 require 'optparse'
 require 'pp'
 require './lib/Match.rb'
-require './lib/MatchSet.rb'
 require './lib/matchers/Matcher.rb'
 require './lib/Responder.rb'
 require './lib/Utils.rb'
@@ -27,8 +26,11 @@ OptionParser.new do |opts|
 end.parse!
 
 # Read in config file
+#####################
+# Defines $logConfigs
+#####################
 begin
-    eval(File.open(options["config"]).read) # Creates LogConfigs
+    eval(File.open(options["config"]).read)
 rescue
     puts "The config file has a syntax error"
 end

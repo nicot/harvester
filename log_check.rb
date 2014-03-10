@@ -5,7 +5,6 @@ require 'pp'
 require './lib/Match.rb'
 require './lib/matchers/Matcher.rb'
 require './lib/Responder.rb'
-require './lib/Utils.rb'
 
 options = {"file" => nil, "out" => nil, "config" => "./etc/config.rb"}
 OptionParser.new do |opts|
@@ -30,23 +29,23 @@ end.parse!
 # Defines $logConfigs
 #####################
 begin
-    eval(File.open(options["config"]).read)
+    logConfigs = eval(File.open(options["config"]).read)
 rescue
-    puts "The config file has a syntax error"
+    puts "The config file has a syntax error."
 end
 
 # check if command line specified file exists in config, and if so, load it
 if options["file"]
     argfile = options["file"]
-    if $logConfigs.has_key?(argfile)
-        $logConfigs = {argfile => $logConfigs[argfile]}
+    if logConfigs.has_key?(argfile)
+        logConfigs = {argfile => logConfigs[argfile]}
     else
         puts "Error: #{argfile} must be in the config file"
         exit
     end
 end
 
-$logConfigs.each do |file, config|
+logConfigs.each do |file, config|
 	copy_file = file + ".copy"
 	
 	if !File.exist?(file) 

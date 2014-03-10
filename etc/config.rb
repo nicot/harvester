@@ -4,7 +4,7 @@ require './lib/matchers/NotInSudoersMatcher.rb'
 require './lib/matchers/RMTEInfoFilterMatcher.rb'
 require './lib/matchers/RejectingIOToOfflineDeviceMatcher.rb'
 
-$logConfigs = {
+{
 	"../sudo.log" => [
 		{
 			:matchers => [

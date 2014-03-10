@@ -91,10 +91,6 @@ $logConfigs.each do |file, config|
 	#### Matcher/Responder logic
 	# Get all the matchers
 	allMatchers = config.map{|x| x[:matchers]}.flatten.uniq
-	# If we want to do a filter behavior, add CatchAllMatcher
-	if config.map{|x| x[:behavior]}.include? :filter
-		allMatchers.push(CatchAllMatcher.new)
-	end
 
 	# Run those matchers and store the results
 	allMatches = {}

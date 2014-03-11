@@ -14,6 +14,9 @@ class Match
 	def full_error
 		@attribs[:full]
 	end
+    def exitcode
+        @attribs[:exitcode]
+    end
 	def hash
 		@attribs.hash
 	end
@@ -24,6 +27,7 @@ end
 
 class MatchSet
 	attr_reader :matches
+    attr_reader :exitcode
 	def initialize(obj)
 		@matches = []
 		if obj.is_a?(Array)
@@ -41,9 +45,14 @@ class MatchSet
 			raise "Cannot create MatchSet from #{obj.class.name}"
 		end
 	end
+
 	def full_errors
 		@matches.map { |match| match.full_error }
 	end
+
+    def exitcode
+        @matches.map { |match| match.exitcode }.max
+    end
 
 	def -(other)
 		if other.is_a?(MatchSet)
@@ -53,22 +62,4 @@ class MatchSet
 		end
 	end
 
-end
-
-class Matcher
-	def match(string)
-		# This method should match something in the string
-		raise NotImplementedError.new("You must implement #{name}.")
-	end
-
-	private
-		def package(array)
-			MatchSet.new(array.map{|hash| Match.new(hash)})
-		end
-end
-
-class CatchAllMatcher < Matcher
-	def match(string)
-		package(string.scan(/^(.*)$/).map{|full| {:full => full}})
-	end
 end

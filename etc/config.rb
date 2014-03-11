@@ -14,7 +14,7 @@ require './lib/matchers/NotMe.rb'
                 NotMe.new
 			],
 		 	:responders => [
-		 		Email.new
+		 		Nagios.new
 		 	]
 		}
 	],

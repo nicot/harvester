@@ -25,9 +25,6 @@ OptionParser.new do |opts|
 end.parse!
 
 # Read in config file
-#####################
-# Defines $logConfigs
-#####################
 begin
     logConfigs = eval(File.open(options["config"]).read)
 rescue

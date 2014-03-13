@@ -1,7 +1,7 @@
 class Matcher
 	def match(string)
 		# This method should match something in the string
-		raise NotImplementedError.new("You must implement #{name}.")
+		raise NotImplementedError.new("You must implement a matcher.")
 	end
 
 	private

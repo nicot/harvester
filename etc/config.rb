@@ -1,20 +1,18 @@
 #Matchers
-require './lib/matchers/NotAuthorizedMatcher.rb'
-require './lib/matchers/NotInSudoersMatcher.rb'
+require './lib/matchers/DefaultMatcher.rb'
+require './lib/matchers/SudoMatcher.rb'
 require './lib/matchers/RMTEInfoFilterMatcher.rb'
 require './lib/matchers/RejectingIOToOfflineDeviceMatcher.rb'
-require './lib/matchers/NotMe.rb'
 
 {
 	"../sudo.log" => [
 		{
 			:matchers => [
-				RMTEInfoFilterMatcher.new,
-                #CatchAllMatcher.new,
+                #Authorized.new,
                 NotMe.new
 			],
 		 	:responders => [
-		 		Nagios.new
+		 		Email.new
 		 	]
 		}
 	],

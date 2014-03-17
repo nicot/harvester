@@ -1,8 +1,8 @@
 #Matchers
-require './lib/matchers/DefaultMatcher.rb'
-require './lib/matchers/SudoMatcher.rb'
-require './lib/matchers/RMTEInfoFilterMatcher.rb'
-require './lib/matchers/RejectingIOToOfflineDeviceMatcher.rb'
+require './etc/matchers/DefaultMatcher.rb'
+require './etc/matchers/SudoMatcher.rb'
+require './etc/matchers/RMTEInfoFilterMatcher.rb'
+require './etc/matchers/RejectingIOToOfflineDeviceMatcher.rb'
 
 {
 	"../sudo.log" => [

@@ -16,16 +16,16 @@ class Nagios < Responder
     def respond(matchSet)
         case matchSet.exitcode
         when 0
-            puts "OK"
+            warn "OK"
             exit 0
         when 1
-            puts "WARNING"
+            warn "WARNING"
             exit 1
         when 2
-            puts "CRITICAL"
+            warn "CRITICAL"
             exit 2
         else
-            puts "UNKOWN - Unexpected exit code recieved"
+            warn "UNKOWN - Unexpected exit code recieved"
             exit 3
         end
     end

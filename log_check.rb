@@ -12,7 +12,7 @@ options = {"file" => nil, "out" => nil, "config" => "./etc/config.rb"}
 OptionParser.new do |opts|
     opts.banner = "Usage: log_check.rb [options]"
     opts.on('-h', '--help', 'This help information') do
-        puts opts
+        warn opts
         exit
     end
     opts.on('-f', '--file filepath', 'Specifies a file to check') do |filepath|
@@ -30,7 +30,7 @@ end.parse!
 begin
     logConfigs = eval(File.open(options["config"]).read)
 rescue
-    puts "The config file has a syntax error."
+    warn "The config file has a syntax error."
 end
 
 # check if command line specified file exists in config, and if so, load it
@@ -39,7 +39,7 @@ if options["file"]
     if logConfigs.has_key?(argfile)
         logConfigs = {argfile => logConfigs[argfile]}
     else
-        puts "Error: #{argfile} must be in the config file"
+        warn "Error: #{argfile} must be in the config file"
         exit
     end
 end
@@ -49,7 +49,7 @@ logConfigs.each do |file, config|
 	
 	if !File.exist?(file) 
 		if debug_level > 0
-			puts "The log file "+file+" does not exist."
+			warn "The log file "+file+" does not exist."
 		end
 		next
 	end

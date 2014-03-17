@@ -1,10 +1,6 @@
 #!/usr/bin/env ruby
-# TODO ignore a list of people always. ignore some users on specific machines.
-# Make up a list of people on machines. for example, I should be able to use sudo on my machine
-# use unixdoc/systems/etc/system_spec.rb as an example of tests.
 
 require 'optparse'
-#require 'pp'
 require './lib/Match.rb'
 require './lib/Responder.rb'
 

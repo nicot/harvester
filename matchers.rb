@@ -12,6 +12,6 @@ end
 
 class CatchAllMatcher < Matcher
     def self.match(string)
-        string
+        string.scan(/^.*$/)
     end
 end

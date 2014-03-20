@@ -43,6 +43,7 @@ class Log
     end
 
     def diffInc(matcher)
+        raise 'Streaming files this large is not yet implemented'
         # Read the file line by line
         line = %x{wc -l #{@oldFile}}.split.first.to_i
         total = %x{wc -l #{@file}}.split.first.to_i
@@ -54,7 +55,7 @@ class Log
     def diff(matcher)
         # Slurp all of the new lines into memory
         line = %x{wc -l #{@file}}.split.first.to_i - %x{wc -l #{@oldFile}}.split.first.to_i
-        matcher.match(`tail -n #{line} #{@file}`)
+        matcher.match(`tail -n #{line} #{@file}`).join("\n")
     end
 end
 

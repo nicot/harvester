@@ -1,29 +1,63 @@
 #!/usr/bin/env ruby
 require_relative 'config'
 
-class Logs
-    # NOTE This reading method slurps the entire file in, which doesn't scale
-    # well with memory. The alternative is chunking the pieces semantically.
-    # One way to do this is to have each matcher run line by line, but only if
-    # if the previous line matches.
-    def self.diff(file, oldFile)
-        first = File.open(file, 'r') { |handle| handle.readline()}
-        firstOld = File.open(oldFile, 'r') { |handle| handle.readline()}
-        # If the first lines of the files are different, its a new log so blank out the oldfile
-        if (firstOld != first)
-            File.open(oldfile, 'w') { |handle| handle.write("") }
+class Log
+    def initialize(file, oldFile)
+        @file = file
+        @oldFile = oldFile
+    end
+    
+    def new?
+        first = File.open(@file, 'r') { |handle| handle.readline()}
+        firstOld = File.open(@oldFile, 'r') { |handle| handle.readline()}
+        first == firstOld
+    end
+    
+    def run(matcher)
+        if not File.exist?(@file)
+            warn "File #{@file} does not exist." # maybe delete for deployment
+            return ''
         end
-        lineCount = %x{wc -l #{oldFile}}.split.first.to_i
-        `tail -n +#{lineCount+1} #{file}`
+
+        # If the first lines of the files are different, its a new log so blank out the @oldFile
+        if new?
+            File.open(@oldFile, 'w') { |handle| handle.write("") }
+        end
+        
+        # If we would read a ton of new logs into memory, do it line by line.
+        if size > 10**8 # arbitrary limit of 100 MB ~ 10^8 bytes
+            diffInc(matcher)
+        else
+            diff(matcher)
+        end
     end
 
-    def self.read(file)
-        oldFile = file + ".old"
-        if (File.exist?(oldFile))
-            diff(file, oldFile)
+    def size
+        # Size is in bytes
+        if File.exist?(@oldFile)
+            File.size?(@file)-File.size?(@oldFile)
         else
-            File.read(file)
+            File.size?(@file)
         end
+    end
+
+    def read(from, to)
+
+    end
+
+    def diffInc(matcher)
+        # Read the file line by line
+        lineCount = %x{wc -l #{@oldFile}}.split.first.to_i
+        if (File.exist?(@oldFile))
+        else
+            File.readline(file)
+        end
+    end
+
+    def diff(matcher)
+        # Slurp all of the new lines into memory
+        lineCount = %x{wc -l #{@oldFile}}.split.first.to_i
+        matcher.match(read(lineCount, Nil))
     end
 end
 

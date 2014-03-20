@@ -1,6 +1,7 @@
 require_relative 'matchers'
 # This file defines the global constant CONFIGS.
-# CONFIGS is an array of configurations.
+# CONFIGS is an array of configuration objects.
+# files is an array of file paths
 
 class Configuration
     attr_accessor :files, :matchers, :responders, :behavior
@@ -14,9 +15,9 @@ class Configuration
 
     def runMatchers
        @files.each do |file|
-           newLogs = Logs.read(file)
+           log = Log.new(file, file + ".old")
            @matchers.each do |matcher|
-               puts matcher.match(newLogs)
+               log.read(matcher)
            end
        end
     end
@@ -30,8 +31,8 @@ sudo.matchers.push(SudoMatcher)
 configs.push(sudo)
 
 hardware = Configuration.new
-sudo.files.push("../kern.log")
-sudo.matchers.push(CatchAllMatcher)
+hardware.files.push("../kern.log")
+hardware.matchers.push(CatchAllMatcher)
 configs.push(hardware)
 
 CONFIGS = configs

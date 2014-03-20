@@ -8,9 +8,13 @@ class Log
     end
     
     def new?
-        first = File.open(@file, 'r') { |handle| handle.readline()}
-        firstOld = File.open(@oldFile, 'r') { |handle| handle.readline()}
-        first == firstOld
+        if File.exist?(@oldFile)
+            first = File.open(@file, &:gets)
+            firstOld = File.open(@oldFile, &:gets)
+            first != firstOld
+        else
+            true
+        end
     end
     
     def run(matcher)
@@ -19,7 +23,7 @@ class Log
             return ''
         end
 
-        # If the first lines of the files are different, its a new log so blank out the @oldFile
+        # If the first lines of the files are different its a new log so blank out the @oldFile
         if new?
             File.open(@oldFile, 'w') { |handle| handle.write("") }
         end
@@ -27,40 +31,34 @@ class Log
         # If we would read a ton of new logs into memory, do it line by line.
         if size > 10**8 # arbitrary limit of 100 MB ~ 10^8 bytes
             diffInc(matcher)
-        else
+        elsif size > 0
             diff(matcher)
+        else
+            ''
         end
     end
 
     def size
-        # Size is in bytes
-        if File.exist?(@oldFile)
-            File.size?(@file)-File.size?(@oldFile)
-        else
-            File.size?(@file)
-        end
-    end
-
-    def read(from, to)
-
+        File.size?(@file).to_i - File.size?(@oldFile).to_i
     end
 
     def diffInc(matcher)
         # Read the file line by line
-        lineCount = %x{wc -l #{@oldFile}}.split.first.to_i
-        if (File.exist?(@oldFile))
-        else
-            File.readline(file)
+        line = %x{wc -l #{@oldFile}}.split.first.to_i
+        total = %x{wc -l #{@file}}.split.first.to_i
+        while line < total
+            matcher.match(read(line, line+1))
         end
     end
 
     def diff(matcher)
         # Slurp all of the new lines into memory
-        lineCount = %x{wc -l #{@oldFile}}.split.first.to_i
-        matcher.match(read(lineCount, Nil))
+        line = %x{wc -l #{@file}}.split.first.to_i - %x{wc -l #{@oldFile}}.split.first.to_i
+        matcher.match(`tail -n #{line} #{@file}`)
     end
 end
 
+TAIL_BUF_LENGTH = 3 #FIXME
 CONFIGS.each do |config|
     config.runMatchers
 end

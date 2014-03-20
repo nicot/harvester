@@ -17,7 +17,7 @@ class Configuration
        @files.each do |file|
            log = Log.new(file, file + ".old")
            @matchers.each do |matcher|
-               log.read(matcher)
+               log.run(matcher)
            end
        end
     end

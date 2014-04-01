@@ -36,4 +36,9 @@ hardware.files.push("../kern.log")
 hardware.matchers.push(CatchAllMatcher)
 configs.push(hardware)
 
+nrpe = Configuration.new
+nrpe.files.push("../nrpe.log")
+nrpe.matchers.push(CatchAllMatcher)
+configs.push(nrpe)
+
 CONFIGS = configs

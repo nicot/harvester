@@ -36,6 +36,7 @@ class Log
         else
             ''
         end
+        #copy over the new file
     end
 
     def size
@@ -43,12 +44,14 @@ class Log
     end
 
     def diffInc(matcher)
-        raise 'Streaming files this large is not yet implemented'
         # Read the file line by line
-        line = %x{wc -l #{@oldFile}}.split.first.to_i
-        total = %x{wc -l #{@file}}.split.first.to_i
-        while line < total
-            matcher.match(read(line, line+1))
+        oldLineCount = %x{wc -l #{@oldFile}}.split.first.to_i
+        fileLineCount = %x{wc -l #{@file}}.split.first.to_i
+        IO.foreach(@file).with_index do |line, currentLineNumber|
+            if currentLineNumber >= oldLineCount
+                puts matcher.match(line)
+            end
+            currentLineNumber += 1
         end
     end
 
@@ -59,7 +62,6 @@ class Log
     end
 end
 
-TAIL_BUF_LENGTH = 3 #FIXME
 CONFIGS.each do |config|
     config.runMatchers
 end

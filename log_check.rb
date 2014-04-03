@@ -6,7 +6,9 @@ class Log
         @file = file
         @oldFile = oldFile
         # arbitrary limit of 100 MB ~ 10^8 bytes
-        @@max = 10**5
+        # 10**8 is around the max that my (wimpy) machine can handle
+        @@max = 10**8
+        @@matcherSize = 10**6
     end
     
     def new?
@@ -41,21 +43,11 @@ class Log
     end
 
     def read(matcher)
-        # Read the file bit by bit
-        # Possible errors: There's not a newline in 1000 characters.
-        # Solution: Write better log messages.
         handle = File.new(@file)
         handle.sysseek(File.size?(@oldFile).to_i)
-        # We need to define size.
-        # We could do until we find a newline.
-        # What we really want is paragraphs, or groups of semantic meaning.
-        # It's important that we send the whole thing into the matcher.
-        # So the tricky thing is finding the right number of bytes to read.
         content = handle.sysread(@@max)
-        bytes = @@max - content.reverse.index("\n")
-        handle.sysseek(@@max-bytes, IO::SEEK_CUR)
-        content = content.slice(0, bytes)
-        File.open(@oldFile, 'a') { |handle| handle.write(content) } #Commented out for development
+        handle.sysseek(@@matcherSize, IO::SEEK_CUR)
+        File.open(@oldFile, 'a') { |handle| handle.write(content) }
         puts matcher.match(content)
     end
 end

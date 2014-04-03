@@ -30,9 +30,9 @@ class Log
         
         # If we would read a ton of new logs into memory, do it line by line.
         if size > 10**8 # arbitrary limit of 100 MB ~ 10^8 bytes
-            diffInc(matcher)
+            readInc(matcher)
         elsif size > 0
-            diff(matcher)
+            read(matcher)
         else
             ''
         end
@@ -43,28 +43,30 @@ class Log
         File.size?(@file).to_i - File.size?(@oldFile).to_i
     end
 
-    def diffInc(matcher)
-        # Read the file line by line
-        oldLineCount = %x{wc -l #{@oldFile}}.split.first.to_i
-        fileLineCount = %x{wc -l #{@file}}.split.first.to_i
-        IO.foreach(@file).with_index do |line, currentLineNumber|
-            if currentLineNumber >= oldLineCount
-                puts matcher.match(line)
-            end
-            currentLineNumber += 1
-        end
+    def readInc(matcher)
+        # Read the file bit by bit
+        # Possible errors: There's not a newline in 1000 characters.
+        # Solution: Write better log messages.
+        handle = File.new(@file)
+        handle.sysseek(File.size?(@oldFile).to_i)
+        # We need to define size.
+        # We could do until we find a newline.
+        # What we really want is paragraphs, or groups of semantic meaning.
+        # It's important that we send the whole thing into the matcher.
+        #matcher.match(handle.sysread(bytes))
+        bytes = handle.sysread(1000).reverse.index("\n")
+        handle.sysseek(-1000, IO::SEEK_CUR)
+        matcher.match(handle.sysread(1000-bytes))
     end
 
-    def diff(matcher)
-        # Slurp all of the new lines into memory
-        line = %x{wc -l #{@file}}.split.first.to_i - %x{wc -l #{@oldFile}}.split.first.to_i
-        matcher.match(`tail -n #{line} #{@file}`).join("\n")
+    def read(matcher)
+        # Slurp it all into memory!
+        handle = File.new(@file)
+        handle.sysseek(File.size?(@oldFile).to_i)
+        matcher.match(handle.sysread(size))
     end
 end
 
 CONFIGS.each do |config|
     config.runMatchers
 end
-
-#TODO DELETEME for deployment
-#load "spec.rb"

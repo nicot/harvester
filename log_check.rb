@@ -5,6 +5,7 @@ class Log
     def initialize(file, oldFile)
         @file = file
         @oldFile = oldFile
+        @exitcode
         # arbitrary limit of 100 MB ~ 10^8 bytes
         # 10**8 is around the max that my (wimpy) machine can handle
         @@max = 10**8

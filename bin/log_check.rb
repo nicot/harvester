@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
-require_relative 'config'
+require_relative '../lib/config_def'
+require_relative '../lib/config'
 
 class Log
     def initialize(file, oldFile)

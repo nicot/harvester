@@ -1,0 +1,1 @@
+/usr/local/adm/config/log_check/config.rb
